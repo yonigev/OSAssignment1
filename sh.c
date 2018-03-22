@@ -141,7 +141,7 @@ int handleVariableAssign(char* buf){
 //         else return -1;
 //     }
 //     
-//     
+//     TODO:Support ONLY LETTERS in variable (or value)!!!!!!!!!!
     i=0;
     char* variable=malloc(MAX_VAR_LEN);
     char* value=malloc(MAX_VAL_LEN);
