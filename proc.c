@@ -473,7 +473,7 @@ scheduler(void) {
           // It should have changed its p->state before coming back.
           c->proc = 0;
         }
-#endif
+#else
 #ifdef FCFS
         //cprintf("IN FCFS");
         //FCFS POLICY
@@ -490,7 +490,8 @@ scheduler(void) {
             // It should have changed its p->state before coming back.
             c->proc = 0;
         }
-#endif
+
+#else
 
 #ifdef SRT
         struct proc* minimal=0;
@@ -509,7 +510,7 @@ scheduler(void) {
         switchkvm();
         c->proc = 0;
         //------------------------------
-#endif
+#else
 
 #ifdef CFSD
         struct proc *minimal = 0;
@@ -530,6 +531,9 @@ scheduler(void) {
         //------------------------------
 
 #endif
+#endif
+#endif
+#endif
         release(&ptable.lock);
 
     }
@@ -547,7 +551,7 @@ getRunTimeRatio(struct proc *p) {
     int toReturn = 0;
     int wtime = ticks - p->ctime - p->iotime - p->rtime;
     int decay_factor = 0;
-    if (p->priority == 3)          //high priority
+    if (p->priority == 1)          //high priority
         decay_factor = 0.75;
     else if (p->priority == 2)     //normal priority
         decay_factor = 1;
@@ -744,18 +748,24 @@ procdump(void) {
 //
 void
 updatetime() {
-    //acquire(&ptable.lock);
+    acquire(&ptable.lock);
     struct proc *p;
     for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-        if (p->state == RUNNING) {
-            p->rtime++; //increase runtime.
-            if(p->trem==0)
-                cprintf("ERROR-trem is: %d, pid: %d\n",p->trem,p->pid);
-            p->trem--;
-        }
+//        if (p->state == RUNNING) {
+//            runningCounter++;
+//            p->rtime++; //increase runtime.
+//            if(p->trem==0)
+//                cprintf("ERROR-trem is: %d, pid: %d\n",p->trem,p->pid);
+//            p->trem--;
+//        }
+
         if (p->state == SLEEPING) {
             p->iotime++;
         }
     }
-    //release(&ptable.lock);
+    if(myproc()!=0) {
+        myproc()->rtime++;
+        myproc()->trem--;
+    }
+    release(&ptable.lock);
 }
