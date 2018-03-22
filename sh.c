@@ -10,8 +10,15 @@
 #define PIPE  3
 #define LIST  4
 #define BACK  5
-
+#define MAX_HISTORY 16
 #define MAXARGS 10
+#define MAXLEN 128
+#define MAX_VARIABLES 3
+#define MAX_VAR_LEN 32
+#define MAX_VAL_LEN 128
+char* history[MAX_HISTORY]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //command history
+
+
 
 struct cmd {
   int type;
@@ -49,9 +56,217 @@ struct backcmd {
   struct cmd *cmd;
 };
 
+int strncmp(char* s1, char* s2, int len){
+    char s1Char=s1[len];
+    char s2Char=s2[len];
+    int toReturn;
+    s1[len]=0;
+    s2[len]=0;
+    toReturn=strcmp(s1,s2);
+    s1[len]=s1Char;
+    s2[len]=s2Char;
+    return toReturn;
+    
+}
+
+//shift the command array by 1, and add a new command
+//TODO: free old command string?
+void shiftAndAdd(char* command){
+    //printf(1,"SHIFTED!");
+    free(history[0]);
+    //history[0]=0;
+    int i;
+    for(i=1; i<MAX_HISTORY; i++){
+        history[i-1]=history[i];
+    }
+    history[MAX_HISTORY-1]=command;
+}
+//check if history command 
+void printHistory(){
+    int i;
+    int counter=0;
+    for(i=0; i<MAX_HISTORY; i++){
+        if(history[i]!=0){
+            printf(1, "%d. ",counter+1);
+            printf(1,history[i]);
+            counter++;
+            //printf(1,"\n");
+        }
+        
+    }
+}
+
+//check if the user entered an "history" command
+int isPrintHistory(char* buf){
+    if(strcmp(buf,"history\n")==0)
+        return 1;
+    return 0;    
+}
+//
+char* runToNextWord(char* runner){
+    int i=0;
+    while(*runner!=' ' && i<=MAXLEN ){
+        runner++;            //run until space
+        i++;
+    }
+    runner=runner+1;
+    return runner;
+}
+//handle history -l ##    command
+int handleRunFromHistory(char* buf){
+    if(strncmp(buf,"history",7)==0){
+        char* runner=buf;
+        runner=runToNextWord(runner);
+        if(strncmp(runner,"-l",2)==0){
+            runner=runToNextWord(runner);
+            int lineToRun=atoi(runner)-1;
+            strcpy(buf, history[lineToRun]);
+            return 1;
+            
+        }
+    }
+    return 0;
+    
+    
+    
+}
+//Handles variable Assignment if needed.
+int handleVariableAssign(char* buf){
+    int i=0;        //index to iterate over buf
+    int j=0;        //index to iterate over value
+//     //check if Assignment is actually needed. else-return.
+//     while(buf[i]!='='){
+//         i++;
+//         if(i==MAXLEN) return 0;
+//         else return -1;
+//     }
+//     
+//     
+    i=0;
+    char* variable=malloc(MAX_VAR_LEN);
+    char* value=malloc(MAX_VAL_LEN);
+    //copy the variable
+    while(buf[i]!='='){
+        variable[i]=buf[i];
+        i++;
+    }
+    variable[i]=0;       //null terminate
+    //advance index to the value
+    i++;
+    //copy the value
+    while(buf[i]!='\n' && buf[i]!=0 ){
+        value[j]=buf[i];
+        i++;
+        j++;
+    }
+    value[j]=0;       //null terminate
+    return setvariable(variable, value);
+   // printf(1,"ASSIGN IS : %d\n",success);
+    //printf(1,"<%s,%s>\n",variable,value);
+    
+    //return success;
+    
+    
+}
+
+
+//insert the correct value at index 'swapIndex'
+int insertValue(char* buf, int swapIndex){
+    int i=swapIndex+1; //point to the variable's name
+    int varIndex=0;    //iterate over the variable's name
+    char swapped[MAXLEN]={0};
+    char variable[MAX_VAR_LEN]={0};
+    char value[MAX_VAL_LEN]={0};
+    //add to variable, until reaching ending of variable name.
+    while(buf[i]!='$' && buf[i]!=' ' && buf[i]!='\n' && buf[i]!=0){
+        variable[varIndex]=buf[i];
+        i++;
+        varIndex++;        
+    }
+    variable[varIndex]=0;    //null terminate the variable name
+    //now variable has the needed name, put the value into value
+    int varExists=getvariable((char*)&variable,(char*)&value);
+//     printf(1,"<%s,%s>\n",&variable,&value);
+//     printf(1,"varExists: %d\n",varExists);
+    if(varExists!=0){
+//         printf(1,"VAR DOES NOT EXISTS: \n");
+        return varExists;
+    }
+    //create the new array after swapping
+    i=0;
+    int newIndex=0;
+    while(i<swapIndex){
+        swapped[i]=buf[i];
+        i++;
+        //newIndex++;
+    }
+    //now copy the value
+    newIndex=swapIndex;
+    int j;
+    for(j=0; j<strlen(value); j++){
+        swapped[newIndex]=value[j];
+        newIndex++;        
+    }
+    //now copy the rest to "swapped"
+    i=swapIndex+strlen(variable) + 1;   //point to the spot after $<varname>
+    while(buf[i]!='\n' && i<=MAXLEN){
+        swapped[newIndex]=buf[i];
+        i++;
+        newIndex++;
+    }
+    swapped[newIndex]=0;
+    strcpy(buf,swapped);    //copy the swapped line into buf, and return    
+    //memset(buf,MAXLEN,0);
+    return varExists;
+}
+//Swap all $<var> to their values.
+void swapAllVariables(char* buf){
+    int i=0;            //iterate over buf
+    //char* swapped=malloc(MAXLEN);   //the new buf after swapping $<?> with value
+    while(buf[i]!='\n' && i<=MAXLEN && buf[i]!=0){
+        //if  $ sign, swap in swapped
+        if(buf[i]=='$'){
+            insertValue(buf, i);
+        }
+        i++;
+    }
+    
+
+}
+//return 0 to continue (skip iteration), or 1 to run as usual
+int handleVariableCommand(char* buf){
+    int i;
+    for(i=0; i<MAXLEN; i++){//iterate over the line
+        if(buf[i]=='=')     //if assigning
+            return handleVariableAssign(buf);
+    }
+    return 1;  //no assignment needed
+}
+
 int fork1(void);  // Fork but panics on failure.
 void panic(char*);
 struct cmd *parsecmd(char*);
+
+//add a command to the history array
+//if there's not place in the history array, shift all commands, then add.
+void addCommand(char* buf){
+    char* command=malloc(MAXLEN);
+    int foundSpot=0;
+    strcpy(command,buf);   
+    int i;
+    for(i=0; i<MAX_HISTORY; i++){
+        if(history[i] == 0){
+            history[i]=command;
+            foundSpot=1;
+            break;
+        }
+    }
+    if(!foundSpot){
+        shiftAndAdd(command);
+        
+    }
+}
+
 
 // Execute cmd.  Never returns.
 void
@@ -63,7 +278,6 @@ runcmd(struct cmd *cmd)
   struct listcmd *lcmd;
   struct pipecmd *pcmd;
   struct redircmd *rcmd;
-
   if(cmd == 0)
     exit();
 
@@ -76,6 +290,7 @@ runcmd(struct cmd *cmd)
     if(ecmd->argv[0] == 0)
       exit();
     exec(ecmd->argv[0], ecmd->argv);
+
     printf(2, "exec %s failed\n", ecmd->argv[0]);
     break;
 
@@ -144,9 +359,8 @@ getcmd(char *buf, int nbuf)
 int
 main(void)
 {
-  static char buf[100];
+  static char buf[MAXLEN];
   int fd;
-
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){
     if(fd >= 3){
@@ -155,8 +369,24 @@ main(void)
     }
   }
 
+  
   // Read and run input commands.
   while(getcmd(buf, sizeof(buf)) >= 0){
+    //add the input to the history
+    addCommand(buf);
+    if(isPrintHistory(buf)){
+        printHistory();
+        //buf[0]=0;
+        continue;        
+    }
+    swapAllVariables(buf);
+    handleRunFromHistory(buf);
+    swapAllVariables(buf);
+    
+    
+    int variableAssign=handleVariableCommand(buf);
+    if(variableAssign==0)
+        continue;
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       // Chdir must be called by the parent, not the child.
       buf[strlen(buf)-1] = 0;  // chop \n
@@ -164,8 +394,10 @@ main(void)
         printf(2, "cannot cd %s\n", buf+3);
       continue;
     }
-    if(fork1() == 0)
-      runcmd(parsecmd(buf));
+    if(fork1() == 0) {
+        runcmd(parsecmd(buf));
+
+    }
     wait();
   }
   exit();

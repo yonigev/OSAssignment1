@@ -24,6 +24,12 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int yield(void);
+//added task 1.2
+int             setvariable(char*,char*);
+int             getvariable(char*,char*);
+int             remvariable(char*,char*);
+int             wait2(int, int*, int*, int*);
+int             set_priority(int);
 
 // ulib.c
 int stat(char*, struct stat*);
@@ -38,3 +44,4 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+

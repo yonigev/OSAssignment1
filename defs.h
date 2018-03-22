@@ -120,6 +120,7 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+void            updatetime();
 
 // swtch.S
 void            swtch(struct context**, struct context*);
@@ -154,6 +155,14 @@ int             argptr(int, char**, int);
 int             argstr(int, char**);
 int             fetchint(uint, int*);
 int             fetchstr(uint, char**);
+    //added task1.2
+int             setvariable(char*,char*);
+int             getvariable(char*,char*);
+int             remvariable(char*);
+    //added task2
+int             wait2(int, int*,int*,int*);
+    //added task3.4
+int             set_priority(int);
 void            syscall(void);
 
 // timer.c
