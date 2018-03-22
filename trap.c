@@ -13,6 +13,7 @@ struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
 struct spinlock tickslock;
 uint ticks;
+int oldTicks=0;
 
 void
 tvinit(void) {
@@ -50,7 +51,8 @@ trap(struct trapframe *tf) {
                 ticks++;
                 //added task2
                 //every tick, update time for all procs.
-                cprintf("\nupdatetime-ticks:%d\n\n",ticks);
+                oldTicks=ticks;
+
                 updatetime();
                 wakeup(&ticks);
                 release(&tickslock);
@@ -108,8 +110,11 @@ trap(struct trapframe *tf) {
 #ifndef FCFS
     if (myproc() && myproc()->state == RUNNING &&
         tf->trapno == T_IRQ0 + IRQ_TIMER && myproc()->trem<=0) {
-        cprintf("\nin trap-ticks:\ntrem: %d\n",ticks,myproc()->trem);
+        cprintf("\nin trap-now-ticks are:%d   |||   trem: %d\n\nOldticks: %d\n",ticks,myproc()->trem,oldTicks);
         yield();
+    }
+    else if(myproc() && myproc()->state == RUNNING&& myproc()->trem<=0){
+        cprintf("WHAT? TRAPNO: %d\n",tf->trapno);
     }
 #endif
 

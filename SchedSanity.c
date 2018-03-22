@@ -92,9 +92,6 @@ void wait2AndCollect(int pid){
 
 int main(){
 
-    printf(1,"\n\n\nEntered SchedSanity\n\n\n");
-
-
 
     if((pid1=fork())==0){
         printf(1,"I'm process 1, pid: %d\n",getpid());

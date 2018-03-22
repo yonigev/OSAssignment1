@@ -744,18 +744,18 @@ procdump(void) {
 //
 void
 updatetime() {
-    acquire(&ptable.lock);
+    //acquire(&ptable.lock);
     struct proc *p;
     for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
         if (p->state == RUNNING) {
             p->rtime++; //increase runtime.
-            if(p->trem<=0)
-                cprintf("trem is: %d, pid: %d\n",p->trem,p->pid);
+            if(p->trem==0)
+                cprintf("ERROR-trem is: %d, pid: %d\n",p->trem,p->pid);
             p->trem--;
         }
         if (p->state == SLEEPING) {
             p->iotime++;
         }
     }
-    release(&ptable.lock);
+    //release(&ptable.lock);
 }
