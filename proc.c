@@ -439,21 +439,21 @@ set_priority(int priority) {
     }
     return 0;
 }
-int
+double
 getRunTimeRatio(struct proc *p) {
     if(p==0)
         cprintf("REALLY SHOULD NOT HAPPE\n");
     //TODO: return double?
-    int toReturn = 0;
-    int wtime = ticks - p->ctime - p->iotime - p->rtime;
-    int decay_factor = 0;
+    double toReturn;
+    double wtime = ticks - p->ctime - p->iotime - p->rtime;
+    double decay_factor = 0;
     if (p->priority == 1)          //high priority
         decay_factor = 0.75;
     else if (p->priority == 2)     //normal priority
         decay_factor = 1;
     else                        //low priority
         decay_factor = 1.25;
-    toReturn = (p->rtime * decay_factor) / (p->rtime + wtime);
+    toReturn = (double)(p->rtime * decay_factor) / (p->rtime + wtime);
 
     cprintf("getRunTimeRatio returns: %d\n",toReturn);
     return toReturn;
@@ -545,6 +545,7 @@ scheduler(void) {
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
             if (p->state == RUNNABLE) { 
                 if (minimal == 0 || getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
+
                     minimal = p;
                 }
             }
