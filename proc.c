@@ -538,10 +538,12 @@ scheduler(void) {
 
 #ifdef CFSD
         struct proc *minimal = 0;
+        struct proc *currentProc = 0;
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-            if (p->state == RUNNABLE) { 
-                if (minimal == 0 || 1  )){//getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
-                    minimal = p;
+            currentProc=p;
+            if (currentProc->state == RUNNABLE) { 
+                if (minimal == 0 || getRunTimeRatio(currentProc) < getRunTimeRatio(minimal)) {
+                    minimal = currentProc;
                 }
             }
         }
