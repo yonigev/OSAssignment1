@@ -1,9 +1,9 @@
 #include "types.h"
 #include "user.h"
 #include "stat.h"
-#define MEDIUM_LOOP_SIZE 1000
+#define MEDIUM_LOOP_SIZE 10000
 #define LARGE_LOOP_SIZE 500000
-#define VERY_LARGE_LOOP_SIZE 100000
+#define VERY_LARGE_LOOP_SIZE 10000000
 #define PROCNUM 10
 int pids[PROCNUM]={0};
 
