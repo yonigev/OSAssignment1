@@ -549,11 +549,9 @@ scheduler(void) {
                 }
             }
         }
-        if(minimal==0){
-            cprintf("SHOULD NOT HAPPEN\n");
-        }
         //----------------context switch
         if(minimal!=0){      //in case no RUNNABLE processes yet
+            cprintf("FOUND PROC TO RUN\n\n");
             c->proc = minimal;
             switchuvm(minimal);
             minimal->state = RUNNING;
