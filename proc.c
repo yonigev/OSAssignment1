@@ -319,11 +319,15 @@ exit(void) {
         }
     }
 
+    //"round up" rtime in case process ran less than 1 tick
+    if(curproc->lastRtime == curproc->rtime)
+        curproc->rtime++;
+    curproc->lastRtime=curproc->rtime;      //save the rtime for the next time the process's done with the cpu
     // Jump into the scheduler, never to return.
     curproc->state = ZOMBIE;
     //added task2
     curproc->etime = ticks;
-    curproc->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
+   
     sched();
     panic("zombie exit");
 }
@@ -586,6 +590,9 @@ yield(void) {
     acquire(&ptable.lock);  //DOC: yieldlock
     struct proc *p = myproc();
     p->state = RUNNABLE;
+    //"round up" rtime in case process ran less than 1 tick
+    if(p->lastRtime == p->rtime)
+        p->rtime++;
     p->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
@@ -644,6 +651,9 @@ sleep(void *chan, struct spinlock *lk) {
     // Go to sleep.
     p->chan = chan;
     p->state = SLEEPING;
+    //"round up" rtime in case process ran less than 1 tick
+    if(p->lastRtime == p->rtime)
+        p->rtime++;
     p->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
