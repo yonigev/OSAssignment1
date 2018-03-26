@@ -79,21 +79,25 @@ int main(){
        if(pids[i]==0){
            switch(type){
                case 1:
+               set_priority(2);
                process_1();
                exit();
                break;
 
                case 2:
+               set_priority(3);
                process_2();
                exit();
                break;
 
                case 3:
+               set_priority(2);
                process_3();
                exit();
                break;
 
                case 4:
+               set_priority(1);
                process_4();
                exit();
                break;
