@@ -266,7 +266,10 @@ fork(void) {
     np->trem=QUANTUM;     //limit ticks remaining to QUANTUM
     np->lastRtime=0;
     //task 3.4 requirement
-    np->priority=np->parent->priority;
+    if(np->parent!=0)
+        np->priority=np->parent->priority;
+    else
+        np->priority=2
     //task 3.3 requirement for fork? TODO: ask in forum
     np->parent->AI=QUANTUM;
 
@@ -542,7 +545,7 @@ scheduler(void) {
             }
         }
         //----------------context switch
-        if(minimal==0){      //in case no RUNNABLE processes yet
+        if(minimal!=0){      //in case no RUNNABLE processes yet
             c->proc = minimal;
             switchuvm(minimal);
             minimal->state = RUNNING;
