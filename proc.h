@@ -60,6 +60,8 @@ struct proc {
     int rtime;                   // the process' running time.
     int AI;
     int priority;
+    //added for rtime accuracy
+    int lastRtime;
 
 
 };

@@ -264,7 +264,7 @@ fork(void) {
     np->iotime = 0;
     np->AI = QUANTUM;
     np->trem=QUANTUM;     //limit ticks remaining to QUANTUM
-
+    np->lastRtime=0;
     //task 3.4 requirement
     np->priority=np->parent->priority;
     //task 3.3 requirement for fork? TODO: ask in forum
@@ -323,7 +323,7 @@ exit(void) {
     curproc->state = ZOMBIE;
     //added task2
     curproc->etime = ticks;
-    p->rtime++; //TO ROUND UP
+    curproc->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
     sched();
     panic("zombie exit");
 }
@@ -586,7 +586,7 @@ yield(void) {
     acquire(&ptable.lock);  //DOC: yieldlock
     struct proc *p = myproc();
     p->state = RUNNABLE;
-    p->rtime++; //TO ROUND UP
+    p->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
@@ -644,7 +644,7 @@ sleep(void *chan, struct spinlock *lk) {
     // Go to sleep.
     p->chan = chan;
     p->state = SLEEPING;
-    p->rtime++; //TO ROUND UP
+    p->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
