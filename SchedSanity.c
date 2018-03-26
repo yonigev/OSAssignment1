@@ -73,7 +73,7 @@ void wait2AndCollect(int type,int pid){
 int main(){
 
     int i;
-    type=1;
+    int type=1;
     for(i=0; i< PROCNUM * 4; i++){
        pids[i]=fork();
        if(pids[i]==0){
@@ -108,7 +108,7 @@ int main(){
 
    //if it's the parent
     if(pids[PROCNUM-1]!=0){
-        int type=1;
+        type=1;
         for(i=0; i<PROCNUM * 4; i++){
             wait2AndCollect(type,pids[i]);
             if(type<4)
@@ -119,22 +119,22 @@ int main(){
        
 
 
-        printf(1,"TYPE 1\n----------------");
+        printf(1,"TYPE 1\n----------------\n");
         printf(1,"wtime average: %d \n", wtime_acc[0]/PROCNUM);
         printf(1,"rtime average: %d \n", rtime_acc[0]/PROCNUM);
         printf(1,"iotime average: %d \n", iotime_acc[0]/PROCNUM);
 
-        printf(1,"TYPE 2\n----------------");
+        printf(1,"TYPE 2\n----------------\n");
         printf(1,"wtime average: %d \n", wtime_acc[1]/PROCNUM);
         printf(1,"rtime average: %d \n", rtime_acc[1]/PROCNUM);
         printf(1,"iotime average: %d \n", iotime_acc[1]/PROCNUM);
 
-        printf(1,"TYPE 3\n----------------");
+        printf(1,"TYPE 3\n----------------\n");
         printf(1,"wtime average: %d \n", wtime_acc[2]/PROCNUM);
         printf(1,"rtime average: %d \n", rtime_acc[2]/PROCNUM);
         printf(1,"iotime average: %d \n", iotime_acc[2]/PROCNUM);
 
-        printf(1,"TYPE 4\n----------------");
+        printf(1,"TYPE 4\n----------------\n");
         printf(1,"wtime average: %d \n", wtime_acc[3]/PROCNUM);
         printf(1,"rtime average: %d \n", rtime_acc[3]/PROCNUM);
         printf(1,"iotime average: %d \n", iotime_acc[3]/PROCNUM);
