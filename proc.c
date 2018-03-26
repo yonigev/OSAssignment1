@@ -536,13 +536,13 @@ scheduler(void) {
         struct proc *minimal = 0;
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
             if (p->state == RUNNABLE) {
-                if (minimal = 0 || getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
+                if (minimal == 0 || getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
                     minimal = p;
                 }
             }
         }
         //----------------context switch
-        if(minimal=0){      //in case no RUNNABLE processes yet
+        if(minimal==0){      //in case no RUNNABLE processes yet
             c->proc = minimal;
             switchuvm(minimal);
             p->state = RUNNING;
