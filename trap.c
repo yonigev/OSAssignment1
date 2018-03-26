@@ -49,9 +49,6 @@ trap(struct trapframe *tf) {
                 acquire(&tickslock);
                 ticks++;
                 //added task2
-                if(myproc()!=0 && ticks==100){
-                    cprintf("process: %d got to 100 ticks\n",myproc()->pid);
-                }
                 updatetime();
                 wakeup(&ticks);
                 release(&tickslock);
