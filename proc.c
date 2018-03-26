@@ -508,9 +508,9 @@ scheduler(void) {
              }
          }
         //----------------context switch
-        c->proc = p;
-        switchuvm(p);
-        p->state = RUNNING;
+        c->proc = minimal;
+        switchuvm(minimal);
+        minimal->state = RUNNING;
         swtch(&(c->scheduler), p->context);
         switchkvm();
         c->proc = 0;
