@@ -508,7 +508,7 @@ scheduler(void) {
              }
          }
         //----------------context switch
-        if(minimal!=0){
+        if(minimal!=0){       //in case no RUNNABLE processes yet
             c->proc = minimal;
             switchuvm(minimal);
             minimal->state = RUNNING;
@@ -529,12 +529,14 @@ scheduler(void) {
             }
         }
         //----------------context switch
-        c->proc = p;
-        switchuvm(p);
-        p->state = RUNNING;
-        swtch(&(c->scheduler), p->context);
-        switchkvm();
-        c->proc = 0;
+        if(minimal=0){      //in case no RUNNABLE processes yet
+            c->proc = minimal;
+            switchuvm(minimal);
+            p->state = RUNNING;
+            swtch(&(c->scheduler), minimal->context);
+            switchkvm();
+            c->proc = 0;
+        }
         //------------------------------
 
 #endif
@@ -546,13 +548,6 @@ scheduler(void) {
     }
 }
 
-// Enter scheduler.  Must hold only ptable.lock
-// and have changed proc->state. Saves and restores
-// intena because intena is a property of this
-// kernel thread, not this CPU. It should
-// be proc->intena and proc->ncli, but that would
-// break in the few places where a lock is held but
-// there's no process.
 int
 getRunTimeRatio(struct proc *p) {
     int toReturn = 0;
@@ -567,6 +562,14 @@ getRunTimeRatio(struct proc *p) {
     toReturn = (p->rtime * decay_factor) / (p->rtime + wtime);
     return toReturn;
 }
+// Enter scheduler.  Must hold only ptable.lock
+// and have changed proc->state. Saves and restores
+// intena because intena is a property of this
+// kernel thread, not this CPU. It should
+// be proc->intena and proc->ncli, but that would
+// break in the few places where a lock is held but
+// there's no process.
+
 
 void
 sched(void) {
