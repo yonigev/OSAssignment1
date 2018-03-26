@@ -323,6 +323,7 @@ exit(void) {
     curproc->state = ZOMBIE;
     //added task2
     curproc->etime = ticks;
+    p->rtime++; //TO ROUND UP
     sched();
     panic("zombie exit");
 }
@@ -585,6 +586,7 @@ yield(void) {
     acquire(&ptable.lock);  //DOC: yieldlock
     struct proc *p = myproc();
     p->state = RUNNABLE;
+    p->rtime++; //TO ROUND UP
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
@@ -642,6 +644,7 @@ sleep(void *chan, struct spinlock *lk) {
     // Go to sleep.
     p->chan = chan;
     p->state = SLEEPING;
+    p->rtime++; //TO ROUND UP
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
