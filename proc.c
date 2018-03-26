@@ -511,7 +511,7 @@ scheduler(void) {
         c->proc = minimal;
         switchuvm(minimal);
         minimal->state = RUNNING;
-        swtch(&(c->scheduler), p->context);
+        swtch(&(c->scheduler), minimal->context);
         switchkvm();
         c->proc = 0;
         //------------------------------
