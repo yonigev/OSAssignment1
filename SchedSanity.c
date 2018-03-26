@@ -25,7 +25,7 @@ int process_2(){
     for(i=0; i<loopSize; i++){
         sum=sum+i;
     }
-    return res;
+    return sum;
 }
 int process_3(){
     int loopSize=MEDIUM_LOOP_SIZE;
@@ -37,7 +37,7 @@ int process_3(){
         //printf(1,toPrint,res);
        // printf(1,"%d\n", i);
     }
-    return res;
+    return sum;
 }
 
 int process_4(){
@@ -50,7 +50,7 @@ int process_4(){
         //printf(1,toPrint,res);
         //printf(1,"%d\n", i);
     }
-    return res;
+    return sum;
 }
 
 
