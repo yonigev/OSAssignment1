@@ -441,6 +441,8 @@ set_priority(int priority) {
 }
 int
 getRunTimeRatio(struct proc *p) {
+    if(p==0)
+        cprintf("REALLY SHOULD NOT HAPPE\n");
     //TODO: return double?
     int toReturn = 0;
     int wtime = ticks - p->ctime - p->iotime - p->rtime;
@@ -546,6 +548,9 @@ scheduler(void) {
                     minimal = p;
                 }
             }
+        }
+        if(minimal==0){
+            cprintf("SHOULD NOT HAPPEN\n");
         }
         //----------------context switch
         if(minimal!=0){      //in case no RUNNABLE processes yet
