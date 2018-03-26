@@ -188,7 +188,6 @@ userinit(void) {
     p->trem=QUANTUM;
     p->priority=2;
     p->state = RUNNABLE;
-    //cprintf("ENQUEUEING INASDASASDASDADASDIT PROCESS\n\n");
 
 
 #ifdef FCFS
@@ -268,8 +267,9 @@ fork(void) {
     //task 3.4 requirement
     if(np->parent!=0)
         np->priority=np->parent->priority;
-    else
-        np->priority=2
+    else{
+        np->priority=2;
+    }
     //task 3.3 requirement for fork? TODO: ask in forum
     np->parent->AI=QUANTUM;
 
@@ -441,6 +441,7 @@ set_priority(int priority) {
 }
 int
 getRunTimeRatio(struct proc *p) {
+    //TODO: return double?
     int toReturn = 0;
     int wtime = ticks - p->ctime - p->iotime - p->rtime;
     int decay_factor = 0;
@@ -518,7 +519,7 @@ scheduler(void) {
         struct proc* minimal=0;
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
              if(p->state==RUNNABLE) {
-                 if (minimal==0 || (p->AI - p->rtime) < (minimal->AI - minimal->rtime)) {
+                 if (minimal == 0 || (p->AI - p->rtime) < (minimal->AI - minimal->rtime)) {
                      minimal = p;
                  }
              }
@@ -538,8 +539,8 @@ scheduler(void) {
 #ifdef CFSD
         struct proc *minimal = 0;
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-            if (p->state == RUNNABLE) {
-                if (minimal == 0 || getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
+            if (p->state == RUNNABLE) { 
+                if (minimal == 0 || 1  )){//getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
                     minimal = p;
                 }
             }
