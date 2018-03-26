@@ -545,7 +545,7 @@ scheduler(void) {
         if(minimal==0){      //in case no RUNNABLE processes yet
             c->proc = minimal;
             switchuvm(minimal);
-            p->state = RUNNING;
+            minimal->state = RUNNING;
             swtch(&(c->scheduler), minimal->context);
             switchkvm();
             c->proc = 0;
