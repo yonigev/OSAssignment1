@@ -6,22 +6,22 @@
 #define VERY_LARGE_LOOP_SIZE 100000
 #define PROCNUM 10
 int pids[PROCNUM]={0};
+
 int process_1(){
     int loopSize=MEDIUM_LOOP_SIZE;
     int i;
-    long sum=0;
+    int sum=0;
     for(i=0; i<loopSize; i++){
        sum=sum+i;
     }
     return sum;
-
 }
 
 
 int process_2(){
     int loopSize=VERY_LARGE_LOOP_SIZE;
     int i;
-    long sum=0;
+    int sum=0;
     for(i=0; i<loopSize; i++){
         sum=sum+i;
     }
@@ -30,7 +30,7 @@ int process_2(){
 int process_3(){
     int loopSize=MEDIUM_LOOP_SIZE;
     int i;
-    long sum=0;
+    int sum=0;
     //char* toPrint="We don't know what we're testing!!!!\nBut the result is:%d\n";
     for(i=0; i<loopSize; i++){
         sum=sum+i;
@@ -43,7 +43,7 @@ int process_3(){
 int process_4(){
     int loopSize=VERY_LARGE_LOOP_SIZE;
     int i;
-    long sum=0;
+    int sum=0;
     //char* toPrint="We don't know what we're testing!!!!\nBut the result is:%d\n";
     for(i=0; i<loopSize; i++){
         sum=sum+i;
