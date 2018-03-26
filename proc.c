@@ -452,6 +452,8 @@ getRunTimeRatio(struct proc *p) {
     else                        //low priority
         decay_factor = 1.25;
     toReturn = (p->rtime * decay_factor) / (p->rtime + wtime);
+
+    cprintf("getRunTimeRatio returns: %d\n",toReturn);
     return toReturn;
 }
 //PAGEBREAK: 42
@@ -538,12 +540,10 @@ scheduler(void) {
 
 #ifdef CFSD
         struct proc *minimal = 0;
-        struct proc *currentProc = 0;
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-            currentProc=p;
-            if (currentProc->state == RUNNABLE) { 
-                if (minimal == 0 || getRunTimeRatio(currentProc) < getRunTimeRatio(minimal)) {
-                    minimal = currentProc;
+            if (p->state == RUNNABLE) { 
+                if (minimal == 0 || getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
+                    minimal = p;
                 }
             }
         }
