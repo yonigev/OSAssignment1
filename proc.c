@@ -441,8 +441,6 @@ set_priority(int priority) {
 }
 double
 getRunTimeRatio(struct proc *p) {
-    if(p==0)
-        cprintf("REALLY SHOULD NOT HAPPE\n");
     //TODO: return double?
     double toReturn;
     double wtime = ticks - p->ctime - p->iotime - p->rtime;
@@ -455,7 +453,6 @@ getRunTimeRatio(struct proc *p) {
         decay_factor = 1.25;
     toReturn = (double)(p->rtime * decay_factor) / (p->rtime + wtime);
 
-    cprintf("getRunTimeRatio returns: %d\n",toReturn);
     return toReturn;
 }
 //PAGEBREAK: 42
@@ -545,14 +542,12 @@ scheduler(void) {
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
             if (p->state == RUNNABLE) { 
                 if (minimal == 0 || getRunTimeRatio(p) < getRunTimeRatio(minimal)) {
-
                     minimal = p;
                 }
             }
         }
         //----------------context switch
         if(minimal!=0){      //in case no RUNNABLE processes yet
-            cprintf("FOUND PROC TO RUN\n\n");
             c->proc = minimal;
             switchuvm(minimal);
             minimal->state = RUNNING;
