@@ -436,7 +436,20 @@ set_priority(int priority) {
     }
     return 0;
 }
-
+int
+getRunTimeRatio(struct proc *p) {
+    int toReturn = 0;
+    int wtime = ticks - p->ctime - p->iotime - p->rtime;
+    int decay_factor = 0;
+    if (p->priority == 1)          //high priority
+        decay_factor = 0.75;
+    else if (p->priority == 2)     //normal priority
+        decay_factor = 1;
+    else                        //low priority
+        decay_factor = 1.25;
+    toReturn = (p->rtime * decay_factor) / (p->rtime + wtime);
+    return toReturn;
+}
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -548,20 +561,7 @@ scheduler(void) {
     }
 }
 
-int
-getRunTimeRatio(struct proc *p) {
-    int toReturn = 0;
-    int wtime = ticks - p->ctime - p->iotime - p->rtime;
-    int decay_factor = 0;
-    if (p->priority == 1)          //high priority
-        decay_factor = 0.75;
-    else if (p->priority == 2)     //normal priority
-        decay_factor = 1;
-    else                        //low priority
-        decay_factor = 1.25;
-    toReturn = (p->rtime * decay_factor) / (p->rtime + wtime);
-    return toReturn;
-}
+
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
 // intena because intena is a property of this
