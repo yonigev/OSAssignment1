@@ -3,7 +3,7 @@
 #include "stat.h"
 #define MEDIUM_LOOP_SIZE 10000
 #define LARGE_LOOP_SIZE 500000
-#define VERY_LARGE_LOOP_SIZE 10000000
+#define VERY_LARGE_LOOP_SIZE 100000000000
 #define PROCNUM 10
 int pids[PROCNUM]={0};
 
@@ -19,20 +19,18 @@ int process_1(){
 
 
 int process_2(){
-    int loopSize=VERY_LARGE_LOOP_SIZE;
     int i;
     int sum=0;
-    for(i=0; i<loopSize; i++){
+    for(i=0; i<VERY_LARGE_LOOP_SIZE; i++){
         sum=sum+i;
     }
     return sum;
 }
 int process_3(){
-    int loopSize=MEDIUM_LOOP_SIZE;
     int i;
     int sum=0;
     //char* toPrint="We don't know what we're testing!!!!\nBut the result is:%d\n";
-    for(i=0; i<loopSize; i++){
+    for(i=0; i<MEDIUM_LOOP_SIZE; i++){
         sum=sum+i;
         //printf(1,toPrint,res);
        // printf(1,"%d\n", i);
@@ -41,11 +39,10 @@ int process_3(){
 }
 
 int process_4(){
-    int loopSize=VERY_LARGE_LOOP_SIZE;
     int i;
     int sum=0;
     //char* toPrint="We don't know what we're testing!!!!\nBut the result is:%d\n";
-    for(i=0; i<loopSize; i++){
+    for(i=0; i<VERY_LARGE_LOOP_SIZE; i++){
         sum=sum+i;
         //printf(1,toPrint,res);
         //printf(1,"%d\n", i);
