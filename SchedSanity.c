@@ -3,10 +3,10 @@
 #include "stat.h"
 #define MEDIUM_LOOP_SIZE 10000
 #define LARGE_LOOP_SIZE 500000
-#define VERY_LARGE_LOOP_SIZE 100000000000
+#define VERY_LARGE_LOOP_SIZE 100000
 #define PROCNUM 10
 int pids[PROCNUM]={0};
-
+//asdasdas
 int process_1(){
     int loopSize=MEDIUM_LOOP_SIZE;
     int i;
