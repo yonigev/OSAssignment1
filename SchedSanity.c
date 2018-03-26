@@ -73,7 +73,7 @@ void wait2AndCollect(int type,int pid){
 int main(){
 
     int i;
-    int type=1;
+    type=1;
     for(i=0; i< PROCNUM * 4; i++){
        pids[i]=fork();
        if(pids[i]==0){
@@ -98,12 +98,12 @@ int main(){
                exit();
                break;
            }
-           //move to next type of process.
+       }
+       //move to next type of process.
            if(type<4)
              type++;
            else
              type=1;
-       }
     }
 
    //if it's the parent
