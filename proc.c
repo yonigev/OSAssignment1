@@ -556,6 +556,9 @@ scheduler(void) {
             switchkvm();
             c->proc = 0;
         }
+        else{
+            cprintf("Problem, minimal==0\n");
+        }
         //------------------------------
 #else
 
