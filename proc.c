@@ -541,7 +541,7 @@ scheduler(void) {
         struct proc* minimal=0;
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
              if(p->state==RUNNABLE) {
-                 if (minimal == 0 || (p->AI - p->rtime) < (minimal->AI - minimal->rtime)) {
+                 if (minimal == 0 || 1<2) {
                      minimal = p;
                  }
              }
