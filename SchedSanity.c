@@ -45,7 +45,7 @@ int process_4(){
     for(i=0; i<VERY_LARGE_LOOP_SIZE; i++){
         sum=sum+i;
         //printf(1,toPrint,res);
-        //printf(1,"%d\n", i);
+        printf(1,"%d\n", i);
     }
     return sum;
 }
@@ -71,78 +71,78 @@ void wait2AndCollect(int type,int pid){
 }
 
 int main(){
-//     preempt();
-//     int i;
-//     int type=1;
-//     for(i=0; i< PROCNUM * 4; i++){
-//        pids[i]=fork();
-//        if(pids[i]==0){
-//            switch(type){
-//                case 1:
-//                set_priority(2);
-//                process_1();
-//                exit();
-//                break;
 
-//                case 2:
-//                set_priority(3);
-//                process_2();
-//                exit();
-//                break;
+    int i;
+    int type=1;
+    for(i=0; i< PROCNUM * 4; i++){
+       pids[i]=fork();
+       if(pids[i]==0){
+           switch(type){
+               case 1:
+               set_priority(2);
+               process_1();
+               exit();
+               break;
 
-//                case 3:
-//                set_priority(2);
-//                process_3();
-//                exit();
-//                break;
+               case 2:
+               set_priority(3);
+               process_2();
+               exit();
+               break;
 
-//                case 4:
-//                set_priority(1);
-//                process_4();
-//                exit();
-//                break;
-//            }
-//        }
-//        //move to next type of process.
-//            if(type<4)
-//              type++;
-//            else
-//              type=1;
-//     }
+               case 3:
+               set_priority(2);
+               process_3();
+               exit();
+               break;
 
-//    //if it's the parent
-//     if(pids[PROCNUM-1]!=0){
-//         type=1;
-//         for(i=0; i<PROCNUM * 4; i++){
-//             wait2AndCollect(type,pids[i]);
-//             if(type<4)
-//              type++;
-//             else
-//              type=1;
-//         }
+               case 4:
+               set_priority(1);
+               process_4();
+               exit();
+               break;
+           }
+       }
+       //move to next type of process.
+           if(type<4)
+             type++;
+           else
+             type=1;
+    }
+
+   //if it's the parent
+    if(pids[PROCNUM-1]!=0){
+        type=1;
+        for(i=0; i<PROCNUM * 4; i++){
+            wait2AndCollect(type,pids[i]);
+            if(type<4)
+             type++;
+            else
+             type=1;
+        }
        
 
 
-//         printf(1,"TYPE 1\n----------------\n");
-//         printf(1,"wtime average: %d \n", wtime_acc[0]/PROCNUM);
-//         printf(1,"rtime average: %d \n", rtime_acc[0]/PROCNUM);
-//         printf(1,"iotime average: %d \n", iotime_acc[0]/PROCNUM);
+        printf(1,"TYPE 1\n----------------\n");
+        printf(1,"wtime average: %d \n", wtime_acc[0]/PROCNUM);
+        printf(1,"rtime average: %d \n", rtime_acc[0]/PROCNUM);
+        printf(1,"iotime average: %d \n", iotime_acc[0]/PROCNUM);
 
-//         printf(1,"TYPE 2\n----------------\n");
-//         printf(1,"wtime average: %d \n", wtime_acc[1]/PROCNUM);
-//         printf(1,"rtime average: %d \n", rtime_acc[1]/PROCNUM);
-//         printf(1,"iotime average: %d \n", iotime_acc[1]/PROCNUM);
+        printf(1,"TYPE 2\n----------------\n");
+        printf(1,"wtime average: %d \n", wtime_acc[1]/PROCNUM);
+        printf(1,"rtime average: %d \n", rtime_acc[1]/PROCNUM);
+        printf(1,"iotime average: %d \n", iotime_acc[1]/PROCNUM);
 
-//         printf(1,"TYPE 3\n----------------\n");
-//         printf(1,"wtime average: %d \n", wtime_acc[2]/PROCNUM);
-//         printf(1,"rtime average: %d \n", rtime_acc[2]/PROCNUM);
-//         printf(1,"iotime average: %d \n", iotime_acc[2]/PROCNUM);
+        printf(1,"TYPE 3\n----------------\n");
+        printf(1,"wtime average: %d \n", wtime_acc[2]/PROCNUM);
+        printf(1,"rtime average: %d \n", rtime_acc[2]/PROCNUM);
+        printf(1,"iotime average: %d \n", iotime_acc[2]/PROCNUM);
 
-//         printf(1,"TYPE 4\n----------------\n");
-//         printf(1,"wtime average: %d \n", wtime_acc[3]/PROCNUM);
-//         printf(1,"rtime average: %d \n", rtime_acc[3]/PROCNUM);
-//         printf(1,"iotime average: %d \n", iotime_acc[3]/PROCNUM);
-//     }
-//     exit();
+        printf(1,"TYPE 4\n----------------\n");
+        printf(1,"wtime average: %d \n", wtime_acc[3]/PROCNUM);
+        printf(1,"rtime average: %d \n", rtime_acc[3]/PROCNUM);
+        printf(1,"iotime average: %d \n", iotime_acc[3]/PROCNUM);
+    }
+    exit();
 
 }
