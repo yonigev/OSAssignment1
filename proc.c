@@ -557,7 +557,7 @@ scheduler(void) {
             c->proc = 0;
         }
         else{
-            if(initproc.rtime==-100)
+            if(ticks>1000)
                 cprintf("Problem, minimal==0\n");
         }
         //------------------------------
