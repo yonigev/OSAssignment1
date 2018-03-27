@@ -221,17 +221,17 @@ growproc(int n) {
 
 //called when a process wakes up to RUNNABLE. to update iotime.
 void update_iotime_wakeup(struct proc* p){
-    int sleeping_time=ticks-p->sleep_time;
-    if(sleeping_time == 0)
-        sleeping_time++;
-    p->iotime=p->iotime+sleeping_time;
+    // int sleeping_time=ticks-p->sleep_time;
+    // if(sleeping_time == 0)
+    //     sleeping_time++;
+    p->iotime=p->iotime+sleeping_time+1;
 }
 //called when rtime needs to be updated when going to sleep(), yield() or exit().
 void update_rtime_giveup(struct proc* p){
-    int timeFrame=ticks-p->started_running_time;
-    if(timeFrame == 0)      //round up.
-        timeFrame++;
-    p->rtime=p->rtime + timeFrame;
+    // int timeFrame=ticks-p->started_running_time;
+    // if(timeFrame == 0)      //round up.
+    //     timeFrame++;
+    p->rtime=p->rtime + timeFrame + 1;
 }
 
 
