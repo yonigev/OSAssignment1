@@ -627,7 +627,7 @@ yield(void) {
      update_rtime_giveup(p);
 
     if (p->rtime >= p->AI)
-        p->AI = p->AI + ALPHA * (p->AI);
+        p->AI = p->AI + (double)ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
 
 #ifdef FCFS
