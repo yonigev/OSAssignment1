@@ -689,7 +689,7 @@ sleep(void *chan, struct spinlock *lk) {
     p->state = SLEEPING;
     
     if (p->rtime >= p->AI)
-        p->AI = p->AI + ALPHA * (p->AI);
+        p->AI = p->AI + (double)ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
     sched();
 
