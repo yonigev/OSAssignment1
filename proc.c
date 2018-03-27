@@ -557,7 +557,8 @@ scheduler(void) {
             c->proc = 0;
         }
         else{
-            cprintf("Problem, minimal==0\n");
+            if(initproc.rtime==-100)
+                cprintf("Problem, minimal==0\n");
         }
         //------------------------------
 #else

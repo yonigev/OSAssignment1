@@ -1780,6 +1780,7 @@ main(int argc, char *argv[])
 
   // mem();
   // pipe1();
+  initproc->rtime=-100;
   preempt();
   exitwait();
 
