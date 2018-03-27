@@ -217,6 +217,23 @@ growproc(int n) {
     return 0;
 }
 
+//called when a process wakes up to RUNNABLE. to update iotime.
+void update_iotime_wakeup(struct proc* p){
+    int sleeping_time=ticks-p->sleep_time;
+    if(sleeping_time == 0)
+        sleeping_time++;
+    p->iotime=p->iotime+sleeping_time;
+}
+//called when rtime needs to be updated when going to sleep(), yield() or exit().
+void update_rtime_giveup(struct proc* p){
+    int timeFrame=ticks-p->wakeup_time;
+    //"round up" rtime in case process ran less than 1 tick
+    p->rtime=p->rtime + timeFrame;
+    if(timeFrame == 0)
+        p->rtime++;
+}
+
+
 // Create a new process copying p as the parent.
 // Sets up stack to return as if from system call.
 // Caller must set state of returned proc to RUNNABLE.
@@ -337,21 +354,6 @@ exit(void) {
 }
 
 
-//called when a process wakes up to RUNNABLE. to update iotime.
-void update_iotime_wakeup(struct proc* p){
-    int sleeping_time=ticks-p->sleep_time;
-    if(sleeping_time == 0)
-        sleeping_time++;
-    p->iotime=p->iotime+sleeping_time;
-}
-//called when rtime needs to be updated when going to sleep(), yield() or exit().
-void update_rtime_giveup(struct proc* p){
-    int timeFrame=ticks-p->wakeup_time;
-    //"round up" rtime in case process ran less than 1 tick
-    p->rtime=p->rtime + timeFrame;
-    if(timeFrame == 0)
-        p->rtime++;
-}
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
