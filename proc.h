@@ -61,7 +61,9 @@ struct proc {
     int AI;
     int priority;
     //added for rtime accuracy
-    int lastRtime;
+    int sleep_time;
+    int wakeup_time;
+
 
 
 };

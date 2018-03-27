@@ -104,8 +104,8 @@ trap(struct trapframe *tf) {
     //** ticks%QUANTUM==0 added task3
 
 #ifndef FCFS
-    if (myproc() && myproc()->state == RUNNING &&
-        tf->trapno == T_IRQ0 + IRQ_TIMER && myproc()->trem<=0) {
+    if (myproc() && myproc()->state == RUNNING &&           //TODO: change to <=0 ?
+        tf->trapno == T_IRQ0 + IRQ_TIMER && ticks-myproc()->wakeup_time==0) {
         yield();
     }
 

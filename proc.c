@@ -263,7 +263,8 @@ fork(void) {
     np->iotime = 0;
     np->AI = QUANTUM;
     np->trem=QUANTUM;     //limit ticks remaining to QUANTUM
-    np->lastRtime=0;
+    np->sleep_time=0;
+    np->wakeup_time=0;
     //task 3.4 requirement
     if(np->parent!=0)
         np->priority=np->parent->priority;
@@ -322,10 +323,10 @@ exit(void) {
         }
     }
 
-    //"round up" rtime in case process ran less than 1 tick
-    if(curproc->lastRtime == curproc->rtime)
-        curproc->rtime++;
-    curproc->lastRtime=curproc->rtime;      //save the rtime for the next time the process's done with the cpu
+   
+    update_rtime_giveup(curproc);   //update the rtime of curproc
+
+
     // Jump into the scheduler, never to return.
     curproc->state = ZOMBIE;
     //added task2
@@ -333,6 +334,23 @@ exit(void) {
    
     sched();
     panic("zombie exit");
+}
+
+
+//called when a process wakes up to RUNNABLE. to update iotime.
+void update_iotime_wakeup(struct proc* p){
+    int sleeping_time=ticks-p->sleep_time;
+    if(sleeping_time == 0)
+        sleeping_time++;
+    p->iotime=p->iotime+sleeping_time;
+}
+//called when rtime needs to be updated when going to sleep(), yield() or exit().
+void update_rtime_giveup(struct proc* p){
+    int timeFrame=ticks-p->wakeup_time;
+    //"round up" rtime in case process ran less than 1 tick
+    p->rtime=p->rtime + timeFrame;
+    if(timeFrame == 0)
+        p->rtime++;
 }
 
 // Wait for a child process to exit and return its pid.
@@ -488,7 +506,7 @@ scheduler(void) {
           c->proc = p;
           switchuvm(p);
           p->state = RUNNING;
-
+          p->wakeup_time=ticks;
           swtch(&(c->scheduler), p->context);
           switchkvm();
 
@@ -505,7 +523,7 @@ scheduler(void) {
             c->proc = p;  //dequeue a process
             switchuvm(p);
             p->state = RUNNING;
-
+            p->wakeup_time=ticks;
             swtch(&(c->scheduler), p->context);
             switchkvm();
 
@@ -530,6 +548,7 @@ scheduler(void) {
             c->proc = minimal;
             switchuvm(minimal);
             minimal->state = RUNNING;
+            minimal->wakeup_time=ticks;
             swtch(&(c->scheduler), minimal->context);
             switchkvm();
             c->proc = 0;
@@ -551,6 +570,7 @@ scheduler(void) {
             c->proc = minimal;
             switchuvm(minimal);
             minimal->state = RUNNING;
+            minimal->wakeup_time=ticks;
             swtch(&(c->scheduler), minimal->context);
             switchkvm();
             c->proc = 0;
@@ -600,10 +620,9 @@ yield(void) {
     acquire(&ptable.lock);  //DOC: yieldlock
     struct proc *p = myproc();
     p->state = RUNNABLE;
-    //"round up" rtime in case process ran less than 1 tick
-    if(p->lastRtime == p->rtime)
-        p->rtime++;
-    p->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
+    
+     update_rtime_giveup(p);
+
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
@@ -660,11 +679,12 @@ sleep(void *chan, struct spinlock *lk) {
     }
     // Go to sleep.
     p->chan = chan;
+    
+    
+    update_rtime_giveup(p); //update rtime of p , giving up cpu time.
+    p->sleep_time=ticks;
     p->state = SLEEPING;
-    //"round up" rtime in case process ran less than 1 tick
-    if(p->lastRtime == p->rtime)
-        p->rtime++;
-    p->lastRtime=p->rtime;      //save the rtime for the next time the process's done with the cpu
+    
     if (p->rtime >= p->AI)
         p->AI = p->AI + ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
@@ -686,10 +706,10 @@ sleep(void *chan, struct spinlock *lk) {
 static void
 wakeup1(void *chan) {
     struct proc *p;
-
     for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
         if (p->state == SLEEPING && p->chan == chan) {
             p->state = RUNNABLE;
+            update_iotime_wakeup(p);
 #ifdef FCFS
             enqueue(p);
 #endif
@@ -771,24 +791,24 @@ procdump(void) {
 //
 void
 updatetime() {
-    acquire(&ptable.lock);
-    struct proc *p;
-    for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-//        if (p->state == RUNNING) {
-//            runningCounter++;
-//            p->rtime++; //increase runtime.
-//            if(p->trem==0)
-//                cprintf("ERROR-trem is: %d, pid: %d\n",p->trem,p->pid);
-//            p->trem--;
-//        }
+//     acquire(&ptable.lock);
+//     struct proc *p;
+//     for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+// //        if (p->state == RUNNING) {
+// //            runningCounter++;
+// //            p->rtime++; //increase runtime.
+// //            if(p->trem==0)
+// //                cprintf("ERROR-trem is: %d, pid: %d\n",p->trem,p->pid);
+// //            p->trem--;
+// //        }
 
-        if (p->state == SLEEPING) {
-            p->iotime++;
-        }
-    }
-    if(myproc()!=0) {
-        myproc()->rtime++;
-        myproc()->trem--;
-    }
-    release(&ptable.lock);
+//         if (p->state == SLEEPING) {
+//             p->iotime++;
+//         }
+//     }
+//     if(myproc()!=0) {
+//         myproc()->rtime++;
+//         myproc()->trem--;
+//     }
+//     release(&ptable.lock);
 }
