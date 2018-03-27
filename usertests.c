@@ -382,7 +382,7 @@ preempt(void)
     for(;;)
       ;
   }
-
+  printf(1,"in preempt: before calling close()\n");
   close(pfds[1]);
   if(read(pfds[0], buf, sizeof(buf)) != 1){
     printf(1, "preempt read error");
