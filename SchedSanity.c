@@ -33,7 +33,7 @@ int process_3(){
     for(i=0; i<MEDIUM_LOOP_SIZE; i++){
         sum=sum+i;
         //printf(1,toPrint,res);
-        printf(1,"%d\n", i);
+        //printf(1,"%d\n", i);
     }
     return sum;
 }
@@ -45,7 +45,7 @@ int process_4(){
     for(i=0; i<VERY_LARGE_LOOP_SIZE; i++){
         sum=sum+i;
         //printf(1,toPrint,res);
-        printf(1,"%d\n", i);
+        //printf(1,"%d\n", i);
     }
     return sum;
 }

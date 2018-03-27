@@ -62,7 +62,7 @@ struct proc {
     int priority;
     //added for rtime accuracy
     int sleep_time;
-    int wakeup_time;
+    int started_running_time;
 
 
 
