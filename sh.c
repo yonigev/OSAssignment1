@@ -70,7 +70,6 @@ int strncmp(char* s1, char* s2, int len){
 }
 
 //shift the command array by 1, and add a new command
-//TODO: free old command string?
 void shiftAndAdd(char* command){
     //printf(1,"SHIFTED!");
     free(history[0]);
@@ -90,7 +89,6 @@ void printHistory(){
             printf(1, "%d. ",counter+1);
             printf(1,history[i]);
             counter++;
-            //printf(1,"\n");
         }
         
     }
@@ -134,19 +132,14 @@ int handleRunFromHistory(char* buf){
 int handleVariableAssign(char* buf){
     int i=0;        //index to iterate over buf
     int j=0;        //index to iterate over value
-//     //check if Assignment is actually needed. else-return.
-//     while(buf[i]!='='){
-//         i++;
-//         if(i==MAXLEN) return 0;
-//         else return -1;
-//     }
-//     
-//     TODO:Support ONLY LETTERS in variable (or value)!!!!!!!!!!
     i=0;
     char* variable=malloc(MAX_VAR_LEN);
     char* value=malloc(MAX_VAL_LEN);
     //copy the variable
     while(buf[i]!='='){
+        //if not a letter
+        if(!((buf[i]>='a' && buf[i]<='z') || (buf[i]>='A' && buf[i]<='Z')))
+            return -1;
         variable[i]=buf[i];
         i++;
     }
@@ -161,10 +154,7 @@ int handleVariableAssign(char* buf){
     }
     value[j]=0;       //null terminate
     return setvariable(variable, value);
-   // printf(1,"ASSIGN IS : %d\n",success);
-    //printf(1,"<%s,%s>\n",variable,value);
-    
-    //return success;
+
     
     
 }
@@ -186,10 +176,7 @@ int insertValue(char* buf, int swapIndex){
     variable[varIndex]=0;    //null terminate the variable name
     //now variable has the needed name, put the value into value
     int varExists=getvariable((char*)&variable,(char*)&value);
-//     printf(1,"<%s,%s>\n",&variable,&value);
-//     printf(1,"varExists: %d\n",varExists);
     if(varExists!=0){
-//         printf(1,"VAR DOES NOT EXISTS: \n");
         return varExists;
     }
     //create the new array after swapping

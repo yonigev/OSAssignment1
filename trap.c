@@ -48,8 +48,6 @@ trap(struct trapframe *tf) {
             if (cpuid() == 0) {
                 acquire(&tickslock);
                 ticks++;
-                //added task2
-                updatetime();
                 wakeup(&ticks);
                 release(&tickslock);
             }
@@ -101,11 +99,10 @@ trap(struct trapframe *tf) {
 
     // Force process to give up CPU on clock tick.
     // If interrupts were on while locks held, would need to check nlock.
-    //** ticks%QUANTUM==0 added task3
-
+    
 #ifndef FCFS
-    if (myproc() && myproc()->state == RUNNING &&
-        tf->trapno == T_IRQ0 + IRQ_TIMER && myproc()->trem<=0) {
+    if (myproc() && myproc()->state == RUNNING &&           //TODO: change to <=0 ?
+        tf->trapno == T_IRQ0 + IRQ_TIMER && (ticks-myproc()->started_running_time)>=QUANTUM) {
         yield();
     }
 

@@ -53,15 +53,16 @@ struct proc {
     char name[16];               // Process name (debugging)
 
     //added task 2
-    int trem;                    //num of ticks this proc has remaining for this CPU burst
     int ctime;                   //the process' creation time
     int etime;                   //the process' end time
     int iotime;                  // the process' waiting for io time
     int rtime;                   // the process' running time.
-    int AI;
+    float AI;
     int priority;
     //added for rtime accuracy
-    int lastRtime;
+    int sleep_time;
+    int started_running_time;
+
 
 
 };

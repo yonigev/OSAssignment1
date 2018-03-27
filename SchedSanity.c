@@ -1,18 +1,26 @@
 #include "types.h"
 #include "user.h"
 #include "stat.h"
-#define MEDIUM_LOOP_SIZE 1000
-#define VERY_LARGE_LOOP_SIZE 20000
-#define PROCNUM 3
+#define MEDIUM_LOOP_SIZE 20
+#define VERY_LARGE_LOOP_SIZE 60
+#define MAXINT 2147483647
+#define PROCNUM 10
+
+
 int pids[PROCNUM *  4]={0};
 
 
 int process_1(){
-    int loopSize=MEDIUM_LOOP_SIZE;
     int i;
     int sum=0;
-    for(i=0; i<loopSize; i++){
-       sum=sum+i;
+    float x=123.232;
+    for(i=0; i<MAXINT; i++){
+        sum=sum+i;
+        x=x*i*80.20*19.8/2.2;
+
+
+        asm("");
+
     }
     return sum;
 }
@@ -21,19 +29,23 @@ int process_1(){
 int process_2(){
     int i;
     int sum=0;
-    for(i=0; i<VERY_LARGE_LOOP_SIZE; i++){
+    float x=123.232;
+
+    for(i=0; i<MAXINT; i++){
         sum=sum+i;
+        x=x*x*x*x/123.4122+1+2+3;
+
+        asm("");
     }
     return sum;
 }
 int process_3(){
     int i;
     int sum=0;
-    //char* toPrint="We don't know what we're testing!!!!\nBut the result is:%d\n";
     for(i=0; i<MEDIUM_LOOP_SIZE; i++){
         sum=sum+i;
-        //printf(1,toPrint,res);
-        printf(1,"%d\n", i);
+        //printf(1,"%d\n", i);
+        sleep(1);
     }
     return sum;
 }
@@ -41,11 +53,11 @@ int process_3(){
 int process_4(){
     int i;
     int sum=0;
-    //char* toPrint="We don't know what we're testing!!!!\nBut the result is:%d\n";
+
     for(i=0; i<VERY_LARGE_LOOP_SIZE; i++){
         sum=sum+i;
-        //printf(1,toPrint,res);
-        printf(1,"%d\n", i);
+        //printf(1,"%d\n", i);
+        sleep(1);
     }
     return sum;
 }
