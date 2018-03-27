@@ -48,8 +48,6 @@ trap(struct trapframe *tf) {
             if (cpuid() == 0) {
                 acquire(&tickslock);
                 ticks++;
-                //added task2
-                updatetime();
                 wakeup(&ticks);
                 release(&tickslock);
             }
@@ -104,7 +102,7 @@ trap(struct trapframe *tf) {
     
 #ifndef FCFS
     if (myproc() && myproc()->state == RUNNING &&           //TODO: change to <=0 ?
-        tf->trapno == T_IRQ0 + IRQ_TIMER && (ticks-myproc()->started_running_time)<=0) {
+        tf->trapno == T_IRQ0 + IRQ_TIMER && (ticks-myproc()->started_running_time)>=QUANTUM) {
         yield();
     }
 

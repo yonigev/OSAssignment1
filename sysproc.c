@@ -12,6 +12,7 @@
 #define MAX_VAL_LEN 128
 
 struct variable_pair{
+
     char* variable;
     char* value; 
     
@@ -217,7 +218,7 @@ int remvariable(char* variable){
         if(strncmp(variable_array[i].variable,variable, strlen(variable)==0)){
             variable_array[i].variable=0;
             variable_array[i].value=0;
-            //TODO: IN SHELL DO FREE!!!AHHHHHHHH (AFTER)
+
             return 0;
         }
     }

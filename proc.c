@@ -185,7 +185,6 @@ userinit(void) {
     p->iotime=0;
     p->rtime=0;
     p->AI=QUANTUM;
-    p->trem=QUANTUM;
     p->priority=2;
     p->state = RUNNABLE;
     p->sleep_time=0;
@@ -193,7 +192,6 @@ userinit(void) {
 
 
 #ifdef FCFS
-    cprintf("ENQUEUEING INIT PROCESS\n\n");
     enqueue(p);
 #endif
     release(&ptable.lock);
@@ -222,16 +220,16 @@ growproc(int n) {
 //called when a process wakes up to RUNNABLE. to update iotime.
 void update_iotime_wakeup(struct proc* p){
      int sleeping_time=ticks-p->sleep_time;
-    // if(sleeping_time == 0)
-    //     sleeping_time++;
-    p->iotime=p->iotime+sleeping_time+1;
+//     if(sleeping_time == 0)
+//         sleeping_time++;
+    p->iotime=p->iotime+sleeping_time;
 }
 //called when rtime needs to be updated when going to sleep(), yield() or exit().
 void update_rtime_giveup(struct proc* p){
      int timeFrame=ticks-p->started_running_time;
-    // if(timeFrame == 0)      //round up.
-    //     timeFrame++;
-    p->rtime=p->rtime + timeFrame + 1;
+//     if(timeFrame == 0)      //round up.
+//          timeFrame++;
+    p->rtime=p->rtime + timeFrame;
 }
 
 
@@ -280,15 +278,14 @@ fork(void) {
     np->rtime = 0;
     np->iotime = 0;
     np->AI = QUANTUM;
-    np->trem=QUANTUM;     //limit ticks remaining to QUANTUM
     np->sleep_time=0;
     np->started_running_time=0;
     //task 3.4 requirement
-    if(np->parent!=0)
-        np->priority=np->parent->priority;
-    else{
-        np->priority=2;
-    }
+    //if(np->parent!=0)
+    np->priority=np->parent->priority;
+   // else{
+    np->priority=2;
+    //}
     //task 3.3 requirement for fork? TODO: ask in forum
     np->parent->AI=QUANTUM;
 
@@ -460,19 +457,19 @@ set_priority(int priority) {
     }
     return 0;
 }
-double
+float
 getRunTimeRatio(struct proc *p) {
     //TODO: return double?
-    double toReturn;
-    double wtime = ticks - p->ctime - p->iotime - p->rtime;
-    double decay_factor = 0;
+    float toReturn;
+    float wtime = ticks - p->ctime - p->iotime - p->rtime;
+    float decay_factor = 0;
     if (p->priority == 1)          //high priority
         decay_factor = 0.75;
     else if (p->priority == 2)     //normal priority
         decay_factor = 1;
     else                        //low priority
         decay_factor = 1.25;
-    toReturn = (double)(p->rtime * decay_factor) / (p->rtime + wtime);
+    toReturn = (p->rtime * decay_factor) / (p->rtime + wtime);
 
     return toReturn;
 }
@@ -556,10 +553,7 @@ scheduler(void) {
             switchkvm();
             c->proc = 0;
         }
-        else{
-            if(ticks>1000)
-                cprintf("Problem, minimal==0\n");
-        }
+
         //------------------------------
 #else
 
@@ -602,7 +596,6 @@ scheduler(void) {
 // break in the few places where a lock is held but
 // there's no process.
 
-
 void
 sched(void) {
     int intena;
@@ -632,7 +625,6 @@ yield(void) {
 
     if (p->rtime >= p->AI)
         p->AI = p->AI + (double)ALPHA * (p->AI);
-    p->trem=QUANTUM;            //reset the ticks remaining
 
 #ifdef FCFS
     enqueue(myproc());
@@ -689,10 +681,8 @@ sleep(void *chan, struct spinlock *lk) {
     // Go to sleep.
     p->chan = chan;   
     p->state = SLEEPING;
-    cprintf("process :%d gonna sleep\n",p->pid);
     if (p->rtime >= p->AI)
         p->AI = p->AI + (double)ALPHA * (p->AI);
-    p->trem=QUANTUM;            //reset the ticks remaining
     sched();
 
     // Tidy up.
@@ -806,7 +796,7 @@ updatetime() {
 // //                cprintf("ERROR-trem is: %d, pid: %d\n",p->trem,p->pid);
 // //            p->trem--;
 // //        }
-
+//
 //         if (p->state == SLEEPING) {
 //             p->iotime++;
 //         }
