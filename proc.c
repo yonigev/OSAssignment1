@@ -541,7 +541,7 @@ scheduler(void) {
         struct proc* minimal=0;
         for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
              if(p->state==RUNNABLE) {
-                 if (minimal == 0 || 1<2) {
+                 if (minimal == 0 || (p->AI - p->rtime) < (minimal->AI - minimal->rtime)) {
                      minimal = p;
                  }
              }
@@ -680,14 +680,12 @@ sleep(void *chan, struct spinlock *lk) {
         acquire(&ptable.lock);  //DOC: sleeplock1
         release(lk);
     }
-    // Go to sleep.
-    p->chan = chan;
-    
-    
     update_rtime_giveup(p); //update rtime of p , giving up cpu time.
     p->sleep_time=ticks;
+    // Go to sleep.
+    p->chan = chan;   
     p->state = SLEEPING;
-    
+    cprintf("process :%d gonna sleep\n",p->pid);
     if (p->rtime >= p->AI)
         p->AI = p->AI + (double)ALPHA * (p->AI);
     p->trem=QUANTUM;            //reset the ticks remaining
